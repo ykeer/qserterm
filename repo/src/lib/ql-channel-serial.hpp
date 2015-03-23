@@ -2,6 +2,10 @@
     #define QL_CHANNEL__SERIAL_H
 
 #include <QtSerialPort/QSerialPort>
+#include <QtSerialPort/QSerialPortInfo>
+#include <QIODevice>
+#include <QString>
+#include <QDebug>
 #include "ql-channel.hpp"
 
 class QlChannelSerial : public QlChannel {

@@ -22,7 +22,9 @@ ApplicationWindow { id:app; visible:true
     property var  port:      null  // communication port
     property var  timercb:   null  // processing timer callback
     property int  timerPeriod: 100 // processing timer period, ms
+
     property bool rxSupress: false // supress port RX, allows full RX processing by callback function
+    function rxSupressEn(en){ rxSupress = en; jsStopButton.enabled = en; }
 
     property var  rxin:      []    // RX log strings
     property var  txout:     []    // TX bytes/strings
@@ -196,7 +198,7 @@ ColumnLayout { Layout.fillWidth:true;
     }
     // RX text
     TextArea { id:rxText; readOnly:true; Layout.fillWidth:true; Layout.fillHeight:true; Layout.minimumHeight:300;
-    	textFormat:TextEdit.AutoText; font.pointSize:10; font.family:'Inconsolata, Consolas, Mono'; wrapMode:TextEdit.Wrap;
+    	textFormat:TextEdit.AutoText; font.pointSize:10; font.family:'Inconsolata, Consolas, Mono, Courier New'; wrapMode:TextEdit.Wrap;
     }
 }
 
@@ -258,8 +260,9 @@ ColumnLayout { Layout.fillWidth:true;
 			}
     	}
     	// stop poll button
-    	TButton { id:jsStopButton; text:qsTr('stop'); onClicked:{
+    	TButton { id:jsStopButton; text:qsTr('stop'); enabled:false; onClicked:{
     		if (app.timercb){
+    			jsStopButton.enabled = false;
     			app.timercb   = null;  // clear callback function
     			app.rxSupress = false; // disable RX supress
     			app.port.readBytes();  // clear RX buffer
@@ -268,13 +271,13 @@ ColumnLayout { Layout.fillWidth:true;
     }
     // TX text editor
     TextArea { id:txText; Layout.fillWidth:true; Layout.fillHeight:true; Layout.minimumHeight:150;
-    	font.pointSize:13; font.family:'Inconsolata, Consolas, Mono';
+    	font.pointSize:13; font.family:'Inconsolata, Consolas, Mono, Courier New';
     }
 }
 
 // Logger text
 TextArea { id:logText; readOnly:true; Layout.fillWidth:true; Layout.fillHeight:true; Layout.minimumHeight:100;
-	textFormat:TextEdit.RichText; font.pointSize:9; font.family:'Inconsolata, Consolas, Mono'; wrapMode:TextEdit.Wrap;
+	textFormat:TextEdit.RichText; font.pointSize:9; font.family:'Inconsolata, Consolas, Mono, Courier New'; wrapMode:TextEdit.Wrap;
 }
 
 }}

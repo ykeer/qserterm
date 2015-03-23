@@ -1,8 +1,4 @@
 #include "ql-channel-serial.hpp"
-#include <QSerialPortInfo>
-#include <QIODevice>
-#include <QString>
-#include <QDebug>
 
 QlChannelSerial::QlChannelSerial() : QlChannel() {
 	port_ = new QSerialPort();

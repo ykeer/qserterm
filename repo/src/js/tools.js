@@ -25,7 +25,7 @@ var modbus = {
 	// RTU
 	rtu: {
 		// create RTU request
-		request: function(fun,slave,addr,num){
+		request: function(slave,fun,addr,num){
 			if (fun == 3) return modbus.crcAppend( [slave, fun, addr >> 8, addr & 0xFF, num >> 8, num & 0xFF] );
 			else return [];
 		},

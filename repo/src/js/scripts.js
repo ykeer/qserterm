@@ -7,41 +7,43 @@ var names = [ '',
 ];
 
 var execs = [ '',
-	'// TX array of bytes \n' +
-	'Scripts.tx([48, 0x31, 0x32]);',
+	'// TX bytes \r\n' +
+	'Scripts.tx(48, 0x31, 0x32);',
 
-	'// TX string \n' +
+	'// TX string \r\n' +
 	'Scripts.tx(\'12345\');',
 
-	'// single RTU request \n' +
-	'// parameters: function, slave address, register address, registers number \n' +
-	'Scripts.rtu.single(3, 5, 1, 4);',
+	'// single RTU request \r\n' +
+	'// parameters: slave address, function, register address, registers number \r\n' +
+	'Scripts.rtu.single(5, 3, 1, 4);',
 
-	'// continuous RTU poll \n' +
-	'// parameters: period (ms), function, slave address, register address, registers number \n' +
-	'Scripts.rtu.multi(1000, 3, 5, 1, 4);',
+	'// continuous RTU poll \r\n' +
+	'// parameters: period (ms), slave address, function, register address, registers number \r\n' +
+	'Scripts.rtu.multi(1000, 5, 3, 1, 4);',
 ];
 
-function tx(data){
-	if (typeof(data) === 'number') app.txout.push(data);
-	else if (typeof(data) === 'string') app.txout.push(data);
-	else if (data instanceof Array)
-		for (var i=0; i<data.length; i++)
-			app.txout.push(data[i]);
+// TX numbers/strings/byte arrays
+function tx(){
+	for (var i=0; i<arguments.length; i++){
+		var data = arguments[i];
+		if (typeof(data) === 'number') app.txout.push(data & 0xFF);
+		else if (typeof(data) === 'string') app.txout.push(data);
+		else if (data instanceof Array) app.txout.push(data);
+	}
 }
 
 var rtu = {
-	single: function(fun,slave,addr,num){ app.txout.push(Tools.modbus.rtu.request(fun,slave,addr,num)); },
+	single: function(slave,fun,addr,num){ app.txout.push(Tools.modbus.rtu.request(slave,fun,addr,num)); },
 	
-	multi: function(period,fun,slave,addr,num){
-		app.rxSupress = true;
+	multi: function(period,slave,fun,addr,num){
+		app.rxSupressEn( true );
 		var tcur=period, tpoll=0; // current timer, poll timer
 		app.timercb = function(){
 			if (tpoll === 0){
 				tcur += app.timerPeriod;
 				if (tcur >= period){
 					tcur -= period; tpoll = 2;
-					app.txout.push(Tools.modbus.rtu.request(fun,slave,addr,num));
+					app.txout.push(Tools.modbus.rtu.request(slave,fun,addr,num));
 				}
 			} else { // decrease poll timer
 				if (--tpoll === 0){ // read/parse response packet
@@ -50,9 +52,13 @@ var rtu = {
 					if (!resp.error){
 						app.logg.push(
 							'<font color="green">RTU response:</font> <b>slave</b>=<font color="blue">' + resp.slave +
-							'</font>, <b>fun</b>=<font color="blue">' + resp.fun +
-							'</font>, <b>bytes</b>=<font color="blue">' + resp.num +
-							'</font>, <b>regs</b>=[<font color="red">' + resp.regs.join(',') + '</font>]'
+							'</font> <b>fun</b>=<font color="blue">'   + resp.fun +
+							'</font> <b>bytes</b>=<font color="blue">' + resp.num +
+							'</font> <b>regs</b>=[<font color="red">'  + resp.regs.join(',') + '</font>]'
+						);
+					} else {
+						app.logg.push(
+							'<font color="green">RTU response:</font> <font color="red">error</color>'
 						);
 					}
 				}
