@@ -42,10 +42,10 @@ var rx = { names:['text','hex','chex'],
 			var s = [];
 			for (var i=0; i<data.length; i++){
 				data[i] &= 0xFF;
-				s.push( rx.hex.prefix, (data[i] < 16) ? '0' : '', data[i].toString(16).toUpperCase(), rx.hex.suffix );
-				if (++rx.hex.col >= rx.hex.cols){
-					rx.hex.col = 0;
-					s.push(rx.hex.lf);
+				s.push( rx.chex.prefix, (data[i] < 16) ? '0' : '', data[i].toString(16).toUpperCase(), rx.chex.suffix );
+				if (++rx.chex.col >= rx.chex.cols){
+					rx.chex.col = 0;
+					s.push(rx.chex.lf);
 				}
 			}
 			return s.join('');
@@ -62,6 +62,8 @@ var tx = { names:['text','hex','script'],
 		send:function(t,data){
 			var a = [];
 			for (var i=0; i<t.length; i++) a.push( t.charCodeAt(i) & 0xFF );
+			if (crCheckBox.checked) a.push(13);
+			if (lfCheckBox.checked) a.push(10);
 			data.push(a);
 			return data;
 		}
@@ -78,7 +80,10 @@ var tx = { names:['text','hex','script'],
 	script:{
 		send:function(t,data){
 			data = data;
-			try { eval(t);
+			try {
+				eval(t);
+				if (crCheckBox.checked) data.push(13);
+				if (lfCheckBox.checked) data.push(10);
 			} catch (e) {
 				console.log('Script error: ' + e.message);
 			}

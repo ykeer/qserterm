@@ -55,7 +55,7 @@ ApplicationWindow { id:app; visible:true
     	[portsCombo,portText,baudsCombo,bitsCombo,parityCombo,stopsCombo,connectButton].forEach(function(w){ w.enabled = en; });
     	[disconnectButton,txSendButton].forEach(function(w){ w.enabled = !en; });
     }
-    
+
     // configure port
     function portConfig(){
     	if (port.isOpen()){
@@ -71,8 +71,8 @@ ApplicationWindow { id:app; visible:true
     Component.onCompleted: {
         console.log('Loading config ' + Config.ini)
 		Ini.open(app, Config.ini);
-		app.x = Ini.value('winX', 0)
-		app.y = Ini.value('winY', 0)
+		app.x = Ini.value('winX', 10)
+		app.y = Ini.value('winY', 20)
 		app.width  = Ini.value('winW', 800)
 		app.height = Ini.value('winH', 600)
 		
@@ -88,6 +88,9 @@ ApplicationWindow { id:app; visible:true
  
  		rxFilter.currentIndex    = Ini.value('rxFilter', 0)
  		txFilter.currentIndex    = Ini.value('txFilter', 0)
+
+		crCheckBox.checked       = Ini.value('CR', 'false') === 'true'
+		lfCheckBox.checked       = Ini.value('LF', 'false') === 'true'
  		
  		txText.text              = Qt.atob(Ini.value('txText', ''))
  		
@@ -97,7 +100,7 @@ ApplicationWindow { id:app; visible:true
 
 		enableControls(true);
 
-//console.log(Tools.a.toHex([48,49,50,51],',','0x'));
+//console.log('Argv: ',app.files.argv().length, app.files.argv());
     }
     
     // on destruction update/save config
@@ -119,6 +122,9 @@ ApplicationWindow { id:app; visible:true
 		
 		Ini.setValue('rxFilter', rxFilter.currentIndex)
 		Ini.setValue('txFilter', txFilter.currentIndex)
+
+		Ini.setValue('CR', '' + crCheckBox.checked)
+		Ini.setValue('LF', '' + lfCheckBox.checked)
 		
 		Ini.setValue('txText',   Qt.btoa(txText.text))
 		
@@ -208,6 +214,10 @@ ColumnLayout { Layout.fillWidth:true;
     	TText { text:qsTr(' TX:') }
     	// select TX filter
     	ComboBox { id:txFilter; editable:false; model:Filters.tx.names; implicitWidth:80; anchors.verticalCenter:parent.verticalCenter; }
+
+	TText { text:qsTr(' | ') }
+		CheckBox { id:crCheckBox; text:'CR'; anchors.verticalCenter:parent.verticalCenter; }
+		CheckBox { id:lfCheckBox; text:'LF'; anchors.verticalCenter:parent.verticalCenter; }
     	
 	TText { text:qsTr(' | ') }
     	// clear TX text

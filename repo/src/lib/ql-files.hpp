@@ -43,7 +43,12 @@ class QlFiles : public QObject {
 
         Q_INVOKABLE QList<QVariant> readBytes(const QString &path);
         Q_INVOKABLE bool            writeBytes(const QString &path, const QList<QVariant> &b);
+
+		static QStringList argv_;
+		Q_INVOKABLE QStringList argv();
+
     private:
 };
 
 #endif
+

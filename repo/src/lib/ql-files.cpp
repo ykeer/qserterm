@@ -1,4 +1,5 @@
 #include "ql-files.hpp"
+#include <stdint.h>
 
 QlFiles::QlFiles() : QObject() { }
 QlFiles::QlFiles(QObject* parent) : QObject(parent) { }
@@ -57,10 +58,13 @@ bool QlFiles::writeBytes(const QString &path, const QList<QVariant> &b){
     QFile f(path);
     if (!f.open(QFile::WriteOnly)) return false;
     QDataStream fout(&f);
-    for (int i=0; i<b.size(); i++) fout << (unsigned char)b[i].toInt(0);
+    for (int i=0; i<b.size(); i++) fout << ((uint8_t)b[i].toInt(0) & 0xFF);
     f.close();
     return true;
 }
+
+QStringList QlFiles::argv_ = QStringList();
+QStringList QlFiles::argv(){ return QlFiles::argv_; }
 
 Q_DECLARE_METATYPE(QlFiles*)
 

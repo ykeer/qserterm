@@ -5,8 +5,8 @@ QT           = core gui quick qml serialport network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-HEADERS     += src/main.hpp src/lib/ql-settings.hpp src/lib/ql-files.hpp src/lib/ql-channel.hpp src/lib/ql-channel-serial.hpp
-SOURCES     += src/main.cpp src/lib/ql-settings.cpp src/lib/ql-files.cpp src/lib/ql-channel.cpp src/lib/ql-channel-serial.cpp
+HEADERS     += src/lib/ql-settings.hpp src/lib/ql-files.hpp src/lib/ql-server.hpp src/lib/ql-channel.hpp src/lib/ql-channel-serial.hpp
+SOURCES     += src/main.cpp src/lib/ql-settings.cpp src/lib/ql-files.cpp src/lib/ql-server.cpp src/lib/ql-channel.cpp src/lib/ql-channel-serial.cpp
 
 lin {
     DESTDIR  = build/lin

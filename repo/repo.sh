@@ -5,4 +5,5 @@ cp *.pro ./repo
 cp *.sh ./repo
 cp -R -L src ./repo
 cp -R -L languages ./repo
+cp -R -L doc ./repo
 
