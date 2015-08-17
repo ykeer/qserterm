@@ -1,5 +1,6 @@
 #include "ql-files.hpp"
 #include <stdint.h>
+#include <QtCore/QDataStream>
 
 QlFiles::QlFiles() : QObject() { }
 QlFiles::QlFiles(QObject* parent) : QObject(parent) { }

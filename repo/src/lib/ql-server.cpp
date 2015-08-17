@@ -1,5 +1,6 @@
 #include "ql-server.hpp"
 #include <stdint.h>
+#include <QtCore/QDataStream>
 
  // HttpDaemon is the the class that implements the simple HTTP server.
 QlServer::QlServer(QObject* parent) : QTcpServer(parent), disabled(true) {
