@@ -1,6 +1,8 @@
 # qserterm
 Scriptable Qt/Qml serial terminal
 
+Donate: ** Paypal edartuz@gmail.com **
+
 Text/Hex/C-Hex RX format:
 ![Text/Hex/C-Hex](https://raw.github.com/ncp1402/qserterm/master/repo/doc/pics/pic01.png)
 
