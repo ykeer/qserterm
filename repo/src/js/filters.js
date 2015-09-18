@@ -1,5 +1,5 @@
 var rx = { names:['text','hex','chex'],
-	
+
 	// raw text
 	text:{
 		receive:function(data){
@@ -9,7 +9,7 @@ var rx = { names:['text','hex','chex'],
 			return s.join('');
 		}
 	},
-	
+
 	// HEX
 	hex:{
 		cols:   32,
@@ -55,7 +55,7 @@ var rx = { names:['text','hex','chex'],
 
 
 // TX filters
-var tx = { names:['text','hex','script'],
+var tx = { names:['text','hex'],
 
 	// raw text
 	text:{
@@ -68,25 +68,10 @@ var tx = { names:['text','hex','script'],
 			return data;
 		}
 	},
-	
+
 	// HEX string/array
 	hex:{
 		send:function(t,data){
-			return data;
-		}
-	},
-	
-	// script evaluator
-	script:{
-		send:function(t,data){
-			data = data;
-			try {
-				eval(t);
-				if (crCheckBox.checked) data.push(13);
-				if (lfCheckBox.checked) data.push(10);
-			} catch (e) {
-				console.log('Script error: ' + e.message);
-			}
 			return data;
 		}
 	},

@@ -6,10 +6,11 @@ import QtQuick.Window          2.2
 import QtQml                   2.2
 import QtQuick.Dialogs         1.2
 
+import QlSettings              1.0
+import QlChannelSerial         1.0
+import QlFiles                 1.0
+
 import 'qml'
-import 'js/config.js'  as Config
-import 'js/file.js'    as File
-import 'js/ini.js'     as Ini
 import 'js/tools.js'   as Tools
 import 'js/filters.js' as Filters
 import 'js/scripts.js' as Scripts
@@ -17,9 +18,10 @@ import 'js/scripts.js' as Scripts
 
 ApplicationWindow { id:app; visible:true
 
-	property var files: Qt.createQmlObject('import com.ql.files 1.0; QlFiles {}', app, 'Main')
+	QlFiles { id:files }
+	QlSettings { id:ini; name:'main.ini' }
+	QlChannelSerial { id:port }
 
-    property var  port:      null  // communication port
     property var  timercb:   null  // processing timer callback
     property int  timerPeriod: 100 // processing timer period, ms
 
@@ -32,18 +34,18 @@ ApplicationWindow { id:app; visible:true
 
     Timer { interval:app.timerPeriod; running:true; repeat:true
 		onTriggered: {
-			if (app.port.isOpen()){
+			if (port.isOpen()){
 				if (timercb) timercb();
 				if (!(timercb && rxSupress)){
-					var dataIn = app.port.readBytes();
+					var dataIn = port.readBytes();
 					if (dataIn.length > 0) app.rxin.push( Filters.rx[rxFilter.currentText].receive(dataIn) );
 				}
 				while (app.rxin.length > 0) rxText.insert(rxText.length, rxin.shift());
 				while (app.txout.length > 0){
 					var e = app.txout.shift();
-					if (typeof(e) === 'string')      app.port.writeString(e);
-					else if (typeof(e) === 'number') app.port.writeBytes([e & 0xFF]);
-					else if (e instanceof Array)     app.port.writeBytes(e);
+					if (typeof(e) === 'string')      port.writeString(e);
+					else if (typeof(e) === 'number') port.writeBytes([e & 0xFF]);
+					else if (e instanceof Array)     port.writeBytes(e);
 				}
 			}
 			while (logg.length > 0) logText.append(logg.shift());
@@ -69,70 +71,61 @@ ApplicationWindow { id:app; visible:true
 
     // on creation load config
     Component.onCompleted: {
-        console.log('Loading config ' + Config.ini)
-		Ini.open(app, Config.ini);
-		app.x = Ini.value('winX', 10)
-		app.y = Ini.value('winY', 20)
-		app.width  = Ini.value('winW', 800)
-		app.height = Ini.value('winH', 600)
+		app.x = ini.get('winX', 10)
+		app.y = ini.get('winY', 20)
+		app.width  = ini.get('winW', 800)
+		app.height = ini.get('winH', 600)
 		
-		app.port = Qt.createQmlObject('import com.ql.channels 1.0; QlChannelSerial {}', app, 'Main');
-
-		portsCombo.model         = app.port.channels()
-		portsCombo.currentIndex  = Ini.value('port', 0)
-		portText.text            = Ini.value('portText', '')
-		baudsCombo.editText      = Ini.value('baud', 9600)
-		bitsCombo.currentIndex   = Ini.value('bits', 3)
-		parityCombo.currentIndex = Ini.value('parity', 0)
-		stopsCombo.currentIndex  = Ini.value('stops', 0)
+		portsCombo.model         = port.channels()
+		portsCombo.currentIndex  = ini.get('port', 0)
+		portText.text            = ini.get('portText', '')
+		baudsCombo.editText      = ini.get('baud', 9600)
+		bitsCombo.currentIndex   = ini.get('bits', 3)
+		parityCombo.currentIndex = ini.get('parity', 0)
+		stopsCombo.currentIndex  = ini.get('stops', 0)
  
- 		rxFilter.currentIndex    = Ini.value('rxFilter', 0)
- 		txFilter.currentIndex    = Ini.value('txFilter', 0)
+ 		rxFilter.currentIndex    = ini.get('rxFilter', 0)
+ 		txFilter.currentIndex    = ini.get('txFilter', 0)
 
-		crCheckBox.checked       = Ini.value('CR', 'false') === 'true'
-		lfCheckBox.checked       = Ini.value('LF', 'false') === 'true'
+		crCheckBox.checked       = ini.get('CR', 'false') === 'true'
+		lfCheckBox.checked       = ini.get('LF', 'false') === 'true'
  		
- 		txText.text              = Qt.atob(Ini.value('txText', ''))
+ 		txText.text              = Qt.atob(ini.get('txText', ''))
  		
- 		rxSaveDialog.folder      = Qt.resolvedUrl(Ini.value('rxSaveFolder', '.'))
- 		txSaveDialog.folder      = Qt.resolvedUrl(Ini.value('txSaveFolder', '.'))
- 		txLoadDialog.folder      = Qt.resolvedUrl(Ini.value('txLoadFolder', '.'))
+ 		rxSaveDialog.folder      = Qt.resolvedUrl(ini.get('rxSaveFolder', '.'))
+ 		txSaveDialog.folder      = Qt.resolvedUrl(ini.get('txSaveFolder', '.'))
+ 		txLoadDialog.folder      = Qt.resolvedUrl(ini.get('txLoadFolder', '.'))
 
 		enableControls(true);
-
-//console.log('Argv: ',app.files.argv().length, app.files.argv());
     }
     
     // on destruction update/save config
     Component.onDestruction: {
-    	app.port.close();
+    	port.close();
     	
-        console.log('Saving config ' + Config.ini)
-		Ini.setValue('winX', app.x)
-		Ini.setValue('winY', app.y)
-		Ini.setValue('winW', app.width)
-		Ini.setValue('winH', app.height)
+		ini.put('winX', app.x)
+		ini.put('winY', app.y)
+		ini.put('winW', app.width)
+		ini.put('winH', app.height)
 
-		Ini.setValue('port',     portsCombo.currentIndex)
-		Ini.setValue('portText', portText.text)
-		Ini.setValue('baud',     baudsCombo.editText)
-		Ini.setValue('bits',     bitsCombo.currentIndex)
-		Ini.setValue('parity',   parityCombo.currentIndex)
-		Ini.setValue('stops',    stopsCombo.currentIndex)
+		ini.put('port',     portsCombo.currentIndex)
+		ini.put('portText', portText.text)
+		ini.put('baud',     baudsCombo.editText)
+		ini.put('bits',     bitsCombo.currentIndex)
+		ini.put('parity',   parityCombo.currentIndex)
+		ini.put('stops',    stopsCombo.currentIndex)
 		
-		Ini.setValue('rxFilter', rxFilter.currentIndex)
-		Ini.setValue('txFilter', txFilter.currentIndex)
+		ini.put('rxFilter', rxFilter.currentIndex)
+		ini.put('txFilter', txFilter.currentIndex)
 
-		Ini.setValue('CR', '' + crCheckBox.checked)
-		Ini.setValue('LF', '' + lfCheckBox.checked)
+		ini.put('CR', '' + crCheckBox.checked)
+		ini.put('LF', '' + lfCheckBox.checked)
 		
-		Ini.setValue('txText',   Qt.btoa(txText.text))
+		ini.put('txText',   Qt.btoa(txText.text))
 		
-		Ini.setValue('rxSaveFolder', rxSaveDialog.folder.toString())
-		Ini.setValue('txSaveFolder', txSaveDialog.folder.toString())
-		Ini.setValue('txLoadFolder', txLoadDialog.folder.toString())
-
-		Ini.sync()
+		ini.put('rxSaveFolder', rxSaveDialog.folder.toString())
+		ini.put('txSaveFolder', txSaveDialog.folder.toString())
+		ini.put('txLoadFolder', txLoadDialog.folder.toString())
     }
     
     
@@ -170,19 +163,23 @@ SplitView { id:mainSplit; orientation:Qt.Vertical; anchors.fill:parent
 	TText { text:qsTr(' | ') }
     	TButton { id:connectButton; text:qsTr('connect'); onClicked:{
 			console.log('Connecting to: ' + portsCombo.currentText);
-    		app.port.open(portsCombo.currentText);
-    		if (app.port.isOpen()){
+    		port.open(portsCombo.currentText);
+    		if (port.isOpen()){
 				console.log('Connection success.');
-    			app.portConfig();
+    			portConfig();
     			app.enableControls(false);
 			} else console.log('Connection error.');
     	}}
     	TButton { id:disconnectButton; text:qsTr('disconnect'); onClicked:{
-			console.log('Disconnecting from: ' + app.port.name());
-    		app.port.close();
+			console.log('Disconnecting from: ' + port.name());
+    		port.close();
     		app.enableControls(true);
     	}}
+
+		TText { text:qsTr(' | ') }
+		LocaleBox {	implicitWidth:150; }
     }
+
 
 ColumnLayout { Layout.fillWidth:true;
     Row { spacing:5; Layout.fillWidth:true; Layout.alignment:Qt.AlignTop;
@@ -275,7 +272,7 @@ ColumnLayout { Layout.fillWidth:true;
     			jsStopButton.enabled = false;
     			app.timercb   = null;  // clear callback function
     			app.rxSupress = false; // disable RX supress
-    			app.port.readBytes();  // clear RX buffer
+    			port.readBytes();  // clear RX buffer
 			}
     	}}
     }
@@ -291,4 +288,3 @@ TextArea { id:logText; readOnly:true; Layout.fillWidth:true; Layout.fillHeight:t
 }
 
 }}
-

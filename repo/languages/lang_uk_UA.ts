@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="ru_RU">
+<TS version="2.1" language="uk_UA">
 <context>
     <name>main</name>
     <message>
@@ -11,22 +11,22 @@
     <message>
         <location filename="../src/main.qml" line="155"/>
         <source>baud:</source>
-        <translation type="unfinished">скорость:</translation>
+        <translation type="unfinished">швидкість:</translation>
     </message>
     <message>
         <location filename="../src/main.qml" line="161"/>
         <source>bits:</source>
-        <translation type="unfinished">биты:</translation>
+        <translation type="unfinished">біти:</translation>
     </message>
     <message>
         <location filename="../src/main.qml" line="164"/>
         <source>parity:</source>
-        <translation type="unfinished">парность:</translation>
+        <translation type="unfinished">парність:</translation>
     </message>
     <message>
         <location filename="../src/main.qml" line="167"/>
         <source>stops:</source>
-        <translation type="unfinished">стопы:</translation>
+        <translation type="unfinished">стопи:</translation>
     </message>
     <message>
         <location filename="../src/main.qml" line="170"/>
@@ -48,7 +48,7 @@
     <message>
         <location filename="../src/main.qml" line="180"/>
         <source>disconnect</source>
-        <translation type="unfinished">выкл</translation>
+        <translation type="unfinished">викл</translation>
     </message>
     <message>
         <location filename="../src/main.qml" line="194"/>
@@ -59,19 +59,19 @@
         <location filename="../src/main.qml" line="201"/>
         <location filename="../src/main.qml" line="228"/>
         <source>clear</source>
-        <translation type="unfinished">сброс</translation>
+        <translation type="unfinished">скид</translation>
     </message>
     <message>
         <location filename="../src/main.qml" line="204"/>
         <location filename="../src/main.qml" line="235"/>
         <source>Save to...</source>
-        <translation type="unfinished">Запись в...</translation>
+        <translation type="unfinished">Запис у...</translation>
     </message>
     <message>
         <location filename="../src/main.qml" line="207"/>
         <location filename="../src/main.qml" line="238"/>
         <source>save</source>
-        <translation type="unfinished">запись</translation>
+        <translation type="unfinished">запис</translation>
     </message>
     <message>
         <location filename="../src/main.qml" line="218"/>
@@ -86,17 +86,17 @@
     <message>
         <location filename="../src/main.qml" line="241"/>
         <source>Load from...</source>
-        <translation type="unfinished">Читать из...</translation>
+        <translation type="unfinished">Читати з...</translation>
     </message>
     <message>
         <location filename="../src/main.qml" line="244"/>
         <source>load</source>
-        <translation type="unfinished">читать</translation>
+        <translation type="unfinished">читати</translation>
     </message>
     <message>
         <location filename="../src/main.qml" line="249"/>
         <source>send</source>
-        <translation type="unfinished">передать</translation>
+        <translation type="unfinished">передати</translation>
     </message>
     <message>
         <location filename="../src/main.qml" line="261"/>
@@ -119,22 +119,22 @@
     <message>
         <location filename="../src/js/scripts.js" line="3"/>
         <source>TX bytes</source>
-        <translation type="unfinished">TX байты</translation>
+        <translation type="unfinished">TX байти</translation>
     </message>
     <message>
         <location filename="../src/js/scripts.js" line="4"/>
         <source>TX string</source>
-        <translation type="unfinished">TX строку</translation>
+        <translation type="unfinished">TX стрічку</translation>
     </message>
     <message>
         <location filename="../src/js/scripts.js" line="5"/>
         <source>RTU request</source>
-        <translation type="unfinished">RTU запрос</translation>
+        <translation type="unfinished">RTU запит</translation>
     </message>
     <message>
         <location filename="../src/js/scripts.js" line="6"/>
         <source>RTU poll</source>
-        <translation type="unfinished">RTU опрос</translation>
+        <translation type="unfinished">RTU опит</translation>
     </message>
 </context>
 </TS>

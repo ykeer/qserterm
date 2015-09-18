@@ -1,15 +1,18 @@
-TEMPLATE     = app
-TARGET       = qserterm
+lessThan(QT_MAJOR_VERSION, 5): error("requires Qt 5")
 
-QT           = core gui quick qml serialport network
+TEMPLATE     = app
+TARGET       = uni
+
+QT          += core gui qml quick serialport network printsupport sql
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-HEADERS     += src/lib/ql-settings.hpp src/lib/ql-files.hpp src/lib/ql-server.hpp src/lib/ql-channel.hpp src/lib/ql-channel-serial.hpp
-SOURCES     += src/main.cpp src/lib/ql-settings.cpp src/lib/ql-files.cpp src/lib/ql-server.cpp src/lib/ql-channel.cpp src/lib/ql-channel-serial.cpp
+HEADERS     += src/lib/ql-settings.hpp src/lib/ql-files.hpp src/lib/ql-channel.hpp src/lib/ql-channel-serial.hpp src/lib/ql-channel-socket.hpp src/lib/ql-server.hpp src/lib/qcustomplot.h src/lib/ql-lineplot.hpp src/lib/ql-locale.hpp src/lib/ql-db-kvp-sqlite.hpp
+SOURCES     += src/main.cpp src/lib/ql-settings.cpp src/lib/ql-files.cpp src/lib/ql-channel.cpp src/lib/ql-channel-serial.cpp src/lib/ql-channel-socket.cpp src/lib/ql-server.cpp src/lib/qcustomplot.cpp src/lib/ql-lineplot.cpp src/lib/ql-locale.cpp src/lib/ql-db-kvp-sqlite.cpp
 
 lin {
     DESTDIR  = build/lin
+    QMAKE_INCDIR += /usr/include/i386-linux-gnu
 }
 
 win {
@@ -31,14 +34,12 @@ MOC_DIR      = $$DESTDIR/.moc
 RCC_DIR      = $$DESTDIR/.rcc
 UI_DIR       = $$DESTDIR/.ui
 
-#CONFIG      += static
-
 QMAKE_CXXFLAGS += -std=gnu++0x -Wno-unused-parameter
 QMAKE_CXXFLAGS_RELEASE -= -O1
 QMAKE_CXXFLAGS_RELEASE -= -O2
 QMAKE_CXXFLAGS_RELEASE *= -Os
 
-#QMAKE_LFLAGS += -static -lstdc++
+QMAKE_LFLAGS += -lstdc++
 
 qml.path   = $$DESTDIR
 qml.files += $$files(src/*.qml)
@@ -55,5 +56,11 @@ res.files  += $$files(src/res)
 languages.path    = $$DESTDIR
 languages.files  += $$files(languages)
 
-INSTALLS  += qml qmls js res languages
+static.path    = $$DESTDIR
+static.files  += $$files(static)
+
+db.path    = $$DESTDIR
+db.files  += $$files(db)
+
+INSTALLS  += qml qmls js res languages static db
 

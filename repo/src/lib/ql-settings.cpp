@@ -1,15 +1,30 @@
 #include "ql-settings.hpp"
+#include <QtDebug>
 
-QlSettings::QlSettings() : QObject() { settings_ = nullptr; }
-QlSettings::QlSettings(QObject* parent) : QObject(parent) { settings_ = nullptr; }
+QlSettings::QlSettings(QObject* parent) : QObject(parent) { settings_ = nullptr; m_cache = new QHash<QString,QVariant>; }
 
-void     QlSettings::open(const char *fn){ settings_ = new QSettings(QString::fromUtf8(fn), QSettings::IniFormat); }
-void     QlSettings::open(const QString &fn){ settings_ = new QSettings(fn, QSettings::IniFormat); }
+QlSettings::~QlSettings(){ sync(); }
 
-void     QlSettings::setValue(const QString &key, const QVariant &value){ settings_->setValue(key, value); }
+void QlSettings::open(const QString &fn){ settings_ = new QSettings(fn, QSettings::IniFormat); }
 
-QVariant QlSettings::value(const QString &key, const QVariant &defaultValue) const { return settings_->value(key, defaultValue); }
+void QlSettings::setValue(const QString &key, const QVariant &value){ put(key, value); }
+QVariant QlSettings::value(const QString &key, const QVariant &defaultValue) const { return get(key, defaultValue); }
 
-void     QlSettings::sync(){ settings_->sync(); };
+void QlSettings::put(const QString &key, const QVariant &value){ m_cache->insert(key,value); settings_->setValue(key, value); }
+QVariant QlSettings::get(const QString &key, const QVariant &defaultValue) const {
+	if (m_cache->contains(key)) return m_cache->value(key);
+	return settings_->value(key, defaultValue);
+}
 
-Q_DECLARE_METATYPE(QlSettings*)
+void QlSettings::sync(){
+	settings_->sync();
+	qDebug() << "Saving config" << m_name;
+};
+
+void QlSettings::setName(const QString &name){
+	m_name = name;
+	open(m_name);
+	qDebug() << "Loading config" << m_name;
+}
+QString QlSettings::name(){ return m_name; }
+

@@ -84,7 +84,7 @@ bool QlChannelSerial::paramSet(const QString &name, const QString &value) {
 	else return false;
 }
 
-Q_INVOKABLE QList<int> QlChannelSerial::readBytes() {
+QList<int> QlChannelSerial::readBytes() {
 	QList<int> *l = new QList<int>();
 	if (isOpen() && port_->bytesAvailable()){
 		QByteArray buf = port_->readAll();
@@ -93,7 +93,7 @@ Q_INVOKABLE QList<int> QlChannelSerial::readBytes() {
 	return *l;
 }
 
-Q_INVOKABLE bool QlChannelSerial::writeBytes(const QList<int> &l) {
+bool QlChannelSerial::writeBytes(const QList<int> &l) {
 	if (isOpen()){
 		if (!l.size()) return true;
 		out_->resize(l.size());
@@ -103,7 +103,7 @@ Q_INVOKABLE bool QlChannelSerial::writeBytes(const QList<int> &l) {
 	return false;
 }
 
-Q_INVOKABLE bool QlChannelSerial::writeString(const QString &s) {
+bool QlChannelSerial::writeString(const QString &s) {
 	if (isOpen()){
 		return port_->write(s.toLatin1()) > 0;
 	}
